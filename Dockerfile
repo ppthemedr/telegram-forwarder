@@ -8,4 +8,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # kopieer de volledige repo-inhoud
 COPY . .
 
-CMD ["python", "path/to/forwarder.py"]   # zet hier het echte pad
+CMD ["python", "telegram_forwarder/forwarder.py"]
+
