@@ -1,14 +1,13 @@
 import logging
-from telethon.sync import TelegramClient, events
+from telethon import TelegramClient, events
 from telethon.tl.types import InputChannel
-from telethon.sessions import StringSession
 
 logger = logging.getLogger(__name__)
 
-
 class Forwarder:
     def __init__(self, config):
-        self.telegram = TelegramClient(StringSession(config.session), config.api_id, config.api_hash)
+        self.config = config
+        self.telegram = TelegramClient("bot", config.api_id, config.api_hash)
         self.message_pattern = config.message_pattern
         self.input_chat_ids = config.input_chat_ids
         self.output_chat_ids = config.output_chat_ids
@@ -22,10 +21,10 @@ class Forwarder:
         self.__start_forwarding()
 
     def __connect(self):
-        self.telegram.start()
+        self.telegram.start(bot_token=self.config.bot_token)
 
     def __load_input_chats(self):
-        dialogs = self.telegram.get_dialogs()
+        dialogs = self.telegram.loop.run_until_complete(self.telegram.get_dialogs())
 
         for chat_id in self.input_chat_ids:
             dialog = next(filter(
@@ -42,7 +41,7 @@ class Forwarder:
                 raise RuntimeError(f"Input chat '{chat_id}' was not found")
 
     def __load_output_chats(self):
-        dialogs = self.telegram.get_dialogs()
+        dialogs = self.telegram.loop.run_until_complete(self.telegram.get_dialogs())
 
         for chat_id in self.output_chat_ids:
             dialog = next(filter(
