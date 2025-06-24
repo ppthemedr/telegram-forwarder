@@ -28,7 +28,13 @@ class Forwarder:
         dialogs = self.telegram.get_dialogs()
 
         for chat_id in self.input_chat_ids:
-            dialog = next(filter(lambda e: e.entity.username == chat_id or str(e.entity.id) == chat_id, dialogs), None)
+            dialog = next(filter(
+                lambda e: (
+                    getattr(e.entity, 'username', None) == chat_id or
+                    str(e.entity.id) == chat_id
+                ),
+                dialogs
+            ), None)
 
             if dialog:
                 self.input_chats.append(InputChannel(dialog.entity.id, dialog.entity.access_hash))
@@ -39,7 +45,13 @@ class Forwarder:
         dialogs = self.telegram.get_dialogs()
 
         for chat_id in self.output_chat_ids:
-            dialog = next(filter(lambda e: e.entity.username == chat_id or str(e.entity.id) == chat_id, dialogs), None)
+            dialog = next(filter(
+                lambda e: (
+                    getattr(e.entity, 'username', None) == chat_id or
+                    str(e.entity.id) == chat_id
+                ),
+                dialogs
+            ), None)
 
             if dialog:
                 self.output_chats.append(InputChannel(dialog.entity.id, dialog.entity.access_hash))
