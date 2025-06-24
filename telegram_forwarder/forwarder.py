@@ -1,4 +1,9 @@
+print("⚙️  Starting forwarder.py...")
+
 import os
+print("📦 ENV:", {k: os.getenv(k) for k in [
+    "BOT_TOKEN", "API_ID", "API_HASH", "INPUT_CHATS", "OUTPUT_CHATS", "MESSAGE_PATTERN"
+]})
 import logging
 from telethon import TelegramClient, events, errors
 from telethon.tl.types import InputChannel
