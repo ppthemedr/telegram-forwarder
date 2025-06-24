@@ -92,8 +92,17 @@ class Forwarder:
         self.log.info("Forwarding to %d output chat(s)", len(self.out_chats))
         self.telegram.run_until_disconnected()
 
-# ---------------------------------------------
+# -------------------------------------------------
 # MAIN
-# ---------------------------------------------
+# -------------------------------------------------
 if __name__ == "__main__":
-    Forwarder(Config()).start()
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
+    try:
+        Forwarder(Config()).start()
+    except Exception as e:
+        logging.exception("Fatal error during startup")
+        raise
