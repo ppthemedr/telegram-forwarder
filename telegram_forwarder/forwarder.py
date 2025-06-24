@@ -31,7 +31,7 @@ class Forwarder:
     def __init__(self, cfg: Config):
         self.cfg      = cfg
         self.log      = logging.getLogger("Forwarder")
-        self.telegram = TelegramClient("bot", cfg.api_id, cfg.api_hash)
+        self.telegram  = TelegramClient("sessions/bot", cfg.api_id, cfg.api_hash)
 
         self.in_chats, self.out_chats = [], []
 
