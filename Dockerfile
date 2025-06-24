@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # APP STARTEN
-CMD ["python", "-m", "telegram_forwarder"]
+CMD ["python", "forwarder.py"]
