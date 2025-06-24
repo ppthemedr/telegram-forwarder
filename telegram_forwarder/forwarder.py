@@ -36,8 +36,6 @@ class Forwarder:
     # ------------- lifecycle -------------------
     def start(self):
         self._setup_logging()
-
-        // Login as user — asks for code once, stores session
         self.telegram.start()
         self._load_chats()
         self._run_loop()
