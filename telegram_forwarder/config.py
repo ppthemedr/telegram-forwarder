@@ -1,8 +1,14 @@
 import os
 
-session = os.environ.get('SESSION')
-api_id = os.environ.get('API_ID')
-api_hash = os.environ.get('API_HASH')
-input_chat_ids = os.environ.get('INPUT_CHATS').replace('-100', '').split(',')
-output_chat_ids = os.environ.get('OUTPUT_CHATS').replace('-100', '').split(',')
-message_pattern = os.environ.get('MESSAGE_PATTERN')
+class Config:
+    def __init__(self):
+        self.bot_token = os.environ['BOT_TOKEN']
+        self.api_id = int(os.environ['API_ID'])
+        self.api_hash = os.environ['API_HASH']
+
+        input_chats = os.environ['INPUT_CHATS']
+        output_chats = os.environ['OUTPUT_CHATS']
+
+        self.input_chat_ids = [chat.strip() for chat in input_chats.split(',')]
+        self.output_chat_ids = [chat.strip() for chat in output_chats.split(',')]
+        self.message_pattern = os.environ.get('MESSAGE_PATTERN', None)
