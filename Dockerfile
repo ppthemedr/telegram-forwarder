@@ -24,4 +24,4 @@ RUN mkdir -p sessions
 VOLUME ["/app/sessions"]
 
 # Start de app
-CMD ["python", "telegram_forwarder/forwarder.py"]
+CMD ["python", "-u", "telegram_forwarder/forwarder.py"]
