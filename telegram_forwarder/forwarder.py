@@ -2,8 +2,9 @@ print("⚙️  Starting forwarder.py...")
 
 import os
 print("📦 ENV:", {k: os.getenv(k) for k in [
-    "BOT_TOKEN", "API_ID", "API_HASH", "INPUT_CHATS", "OUTPUT_CHATS", "MESSAGE_PATTERN"
+    "API_ID", "API_HASH", "INPUT_CHATS", "OUTPUT_CHATS", "MESSAGE_PATTERN"
 ]})
+
 import logging
 from telethon import TelegramClient, events, errors
 from telethon.tl.types import InputChannel
@@ -13,15 +14,12 @@ from telethon.tl.types import InputChannel
 # ---------------------------------------------
 class Config:
     def __init__(self):
-        self.bot_token = os.environ["BOT_TOKEN"]
         self.api_id    = int(os.environ["API_ID"])
         self.api_hash  = os.environ["API_HASH"]
 
         self.input_chat_ids  = [c.strip() for c in os.environ["INPUT_CHATS"].split(",")]
         self.output_chat_ids = [c.strip() for c in os.environ["OUTPUT_CHATS"].split(",")]
         self.message_pattern = os.environ.get("MESSAGE_PATTERN") or None
-
-        # Optional: logging level (DEBUG, INFO, WARNING…)
         self.log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
 
 # ---------------------------------------------
@@ -31,14 +29,16 @@ class Forwarder:
     def __init__(self, cfg: Config):
         self.cfg      = cfg
         self.log      = logging.getLogger("Forwarder")
-        self.telegram  = TelegramClient("sessions/bot", cfg.api_id, cfg.api_hash)
+        self.telegram = TelegramClient("sessions/user", cfg.api_id, cfg.api_hash)
 
         self.in_chats, self.out_chats = [], []
 
     # ------------- lifecycle -------------------
     def start(self):
         self._setup_logging()
-        self.telegram.start(bot_token=self.cfg.bot_token)
+
+        // Login as user — asks for code once, stores session
+        self.telegram.start()
         self._load_chats()
         self._run_loop()
 
@@ -48,7 +48,6 @@ class Forwarder:
             level=self.cfg.log_level,
             format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         )
-        # Telethon debug (optioneel, lawaaierig)
         if self.cfg.log_level == "DEBUG":
             logging.getLogger("telethon").setLevel(logging.DEBUG)
 
@@ -84,7 +83,7 @@ class Forwarder:
                     await self.telegram.forward_messages(dest, event.message)
                     self.log.debug(" → forwarded to %s", dest.channel_id)
                 except errors.rpcerrorlist.ChatWriteForbiddenError:
-                    self.log.error("Bot lacks permission to send to %s", dest.channel_id)
+                    self.log.error("No permission to send to %s", dest.channel_id)
                 except Exception as ex:
                     self.log.exception("Unexpected error during forward: %s", ex)
 
